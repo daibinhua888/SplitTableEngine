@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SplitTableEngine</RootNamespace>
     <AssemblyName>SplitTableEngine</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,7 +51,7 @@
     <Compile Include="SqlUtil.cs" />
     <Compile Include="TableConfig.cs" />
     <Compile Include="TableConfigFactory.cs" />
-    <Compile Include="TableObject.cs" />
+    <Compile Include="SplitTable.cs" />
     <Compile Include="TableOperator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

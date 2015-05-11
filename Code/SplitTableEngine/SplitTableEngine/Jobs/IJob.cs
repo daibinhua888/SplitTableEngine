@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SplitTableEngine.Jobs
 {
-    internal interface IJob
+    public interface IJob
     {
         void Process(string connectionString, string tableName);
     }

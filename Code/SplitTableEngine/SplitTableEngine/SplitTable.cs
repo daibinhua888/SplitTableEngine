@@ -6,15 +6,15 @@ using System.Text;
 
 namespace SplitTableEngine
 {
-    public class TableObject
+    public class SplitTable
     {
-        private TableConfig tableConfig;
+        private TableConfig config;
         private TableOperator tableHelper;
 
-        public TableObject(TableConfig tableDescriptor)
+        public SplitTable(TableConfig config)
         {
-            this.tableConfig = tableDescriptor;
-            this.tableHelper = new TableOperator(this.tableConfig);
+            this.config = config;
+            this.tableHelper = new TableOperator(this.config);
         }
 
         public Dictionary<string, object> FindByID(string pkId)
@@ -49,7 +49,7 @@ namespace SplitTableEngine
 
         public bool Update(object entity)
         {
-            string pkId = Convert.ToString(entity.ToDictionary()[this.tableConfig.PrimaryKeyFieldName]);
+            string pkId = Convert.ToString(entity.ToDictionary()[this.config.PrimaryKeyFieldName]);
 
             List<string> mainTableNames = this.tableHelper.GetAllHotTableNames();//拿到所有可能的表名
 
@@ -86,9 +86,9 @@ namespace SplitTableEngine
 
             //排序
             if (string.IsNullOrEmpty(orderBySql) || orderBySql.IndexOf("asc", StringComparison.OrdinalIgnoreCase) >= 0)
-                lst.Sort(this.tableConfig.AscendingSort);
+                lst.Sort(this.config.AscendingSort);
             else
-                lst.Sort(this.tableConfig.DescendingSort);
+                lst.Sort(this.config.DescendingSort);
 
             return lst.Take(maxCount).ToList();
         }
