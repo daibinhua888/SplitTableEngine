@@ -1,0 +1,96 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
+
+namespace SplitTableEngine
+{
+    public class TableObject
+    {
+        private TableConfig tableConfig;
+        private TableOperator tableHelper;
+
+        public TableObject(TableConfig tableDescriptor)
+        {
+            this.tableConfig = tableDescriptor;
+            this.tableHelper = new TableOperator(this.tableConfig);
+        }
+
+        public Dictionary<string, object> FindByID(string pkId)
+        {
+            List<string> mainTableNames = this.tableHelper.GetAllHotTableNames();//拿到所有可能的表名
+
+            foreach (var tableName in mainTableNames)
+            {
+                Dictionary<string, object> results = this.tableHelper.SelectSingleInTable(tableName, pkId);
+                if (results != null && results.Count > 0)
+                    return results;
+            }
+
+            List<string> archiveTableNames = this.tableHelper.GetAllArchiveTableNames();
+            foreach (var tableName in archiveTableNames)
+            {
+                Dictionary<string, object> results = this.tableHelper.SelectSingleInTable(tableName, pkId);
+                if (results != null && results.Count > 0)
+                    return results;
+            }
+
+            return null;
+        }
+
+        public void Insert(object entity)
+        {
+            //定位tablename，从meta table中
+            string mainTableName = this.tableHelper.CalculateTableNameBySplitMethod(entity);//根据算法得到表名
+
+            this.tableHelper.Insert(mainTableName, entity.ToDictionary());
+        }
+
+        public bool Update(object entity)
+        {
+            string pkId = Convert.ToString(entity.ToDictionary()[this.tableConfig.PrimaryKeyFieldName]);
+
+            List<string> mainTableNames = this.tableHelper.GetAllHotTableNames();//拿到所有可能的表名
+
+            foreach (var tableName in mainTableNames)
+            {
+                Dictionary<string, object> results = this.tableHelper.SelectSingleInTable(tableName, pkId);
+                if (results != null && results.Count > 0)
+                {
+                    //更新具体miantable中的记录
+                    return this.tableHelper.UpdateInTable(tableName, entity.ToDictionary());
+                }
+            }
+
+            return false;
+        }
+
+        public List<Dictionary<string, object>> QueryTopN(int maxCount, string whereSql, string orderBySql)
+        {
+            //获取所有的可能表名
+            List<string> mainTableNames = this.tableHelper.GetAllHotTableNames();//拿到所有可能的表名（由于需要orderby，以后这里需要优化、拆分）
+
+            List<Dictionary<string, object>> lst = new List<Dictionary<string, object>>();
+
+            if (mainTableNames == null)
+                return null;
+
+            mainTableNames.ForEach(tableName =>
+            {
+                List<Dictionary<string, object>> tempResult = this.tableHelper.SelectTopNInTable(tableName, maxCount, whereSql, orderBySql);
+
+                if(tempResult!=null)
+                    lst.AddRange(tempResult);
+            });
+
+            //排序
+            if (string.IsNullOrEmpty(orderBySql) || orderBySql.IndexOf("asc", StringComparison.OrdinalIgnoreCase) >= 0)
+                lst.Sort(this.tableConfig.AscendingSort);
+            else
+                lst.Sort(this.tableConfig.DescendingSort);
+
+            return lst.Take(maxCount).ToList();
+        }
+    }
+}
