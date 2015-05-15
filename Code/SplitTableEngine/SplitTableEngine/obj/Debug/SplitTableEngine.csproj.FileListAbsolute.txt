@@ -2,3 +2,7 @@ C:\Users\Administrator\Documents\GitHub\SplitTableEngine\Code\SplitTableEngine\S
 C:\Users\Administrator\Documents\GitHub\SplitTableEngine\Code\SplitTableEngine\SplitTableEngine\bin\Debug\SplitTableEngine.pdb
 C:\Users\Administrator\Documents\GitHub\SplitTableEngine\Code\SplitTableEngine\SplitTableEngine\obj\Debug\SplitTableEngine.dll
 C:\Users\Administrator\Documents\GitHub\SplitTableEngine\Code\SplitTableEngine\SplitTableEngine\obj\Debug\SplitTableEngine.pdb
+C:\Users\McKay\Documents\GitHub\SplitTableEngine\Code\SplitTableEngine\SplitTableEngine\bin\Debug\SplitTableEngine.dll
+C:\Users\McKay\Documents\GitHub\SplitTableEngine\Code\SplitTableEngine\SplitTableEngine\bin\Debug\SplitTableEngine.pdb
+C:\Users\McKay\Documents\GitHub\SplitTableEngine\Code\SplitTableEngine\SplitTableEngine\obj\Debug\SplitTableEngine.dll
+C:\Users\McKay\Documents\GitHub\SplitTableEngine\Code\SplitTableEngine\SplitTableEngine\obj\Debug\SplitTableEngine.pdb

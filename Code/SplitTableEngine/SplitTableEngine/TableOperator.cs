@@ -72,6 +72,29 @@ namespace SplitTableEngine
             return result;
         }
 
+        public int SelectCountInTable(string tableName, string whereSql)
+        {
+            int count = 0;
+
+            using (SqlConnection con = new SqlConnection(this.config.ConnectionString))
+            {
+                string sql = string.Format("SELECT COUNT(1) FROM [{0}](NOLOCK) WHERE {1}",
+                                                        tableName,
+                                                        whereSql);
+                SqlCommand com = new SqlCommand(sql);
+
+                com.Connection = con;
+
+                con.Open();
+
+                count=Convert.ToInt32(com.ExecuteScalar());
+
+                con.Close();
+            }
+
+            return count;
+        }
+
         public bool UpdateInTable(string tableName, Dictionary<string, object> dictionary)
         {
             int rows = 0;
