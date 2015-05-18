@@ -156,7 +156,7 @@ namespace SplitTableEngine
                     fieldSql.Append(string.Format("[{0}],", item.Key));
                     valueSql.Append(string.Format("@{0},", item.Key));
 
-                    SqlParameter p = new SqlParameter(item.Key, item.Value);
+                    SqlParameter p = new SqlParameter(string.Format("@{0}", item.Key), item.Value);
                     parameters.Add(p);
                 }
 
