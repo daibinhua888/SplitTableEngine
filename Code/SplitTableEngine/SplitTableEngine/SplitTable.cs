@@ -66,7 +66,7 @@ namespace SplitTableEngine
             return false;
         }
 
-        public List<Dictionary<string, object>> SelectTopN(int maxCount, string whereSql, string orderBySql)
+        public List<Dictionary<string, object>> SelectTopN(int maxCount, string whereSql, string orderBySql, bool withNoLockOption = true)
         {
             //获取所有的可能表名
             List<string> mainTableNames = this.tableHelper.GetAllHotTableNames();//拿到所有可能的表名（由于需要orderby，以后这里需要优化、拆分）
@@ -78,7 +78,7 @@ namespace SplitTableEngine
 
             mainTableNames.ForEach(tableName =>
             {
-                List<Dictionary<string, object>> tempResult = this.tableHelper.SelectTopNInTable(tableName, maxCount, whereSql, orderBySql);
+                List<Dictionary<string, object>> tempResult = this.tableHelper.SelectTopNInTable(tableName, maxCount, whereSql, orderBySql, withNoLockOption);
 
                 if(tempResult!=null)
                     lst.AddRange(tempResult);

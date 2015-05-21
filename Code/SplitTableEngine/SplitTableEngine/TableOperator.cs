@@ -41,17 +41,27 @@ namespace SplitTableEngine
             return null;
         }
 
-        public List<Dictionary<string, object>> SelectTopNInTable(string tableName, int maxCount, string whereSql, string orderBySql)
+        public List<Dictionary<string, object>> SelectTopNInTable(string tableName, int maxCount, string whereSql, string orderBySql, bool withNoLockOption=true)
         {
             List<Dictionary<string, object>> result = new List<Dictionary<string, object>>();
 
             using (SqlConnection con = new SqlConnection(this.config.ConnectionString))
             {
-                string sql = string.Format("SELECT TOP {0} * FROM [{1}](NOLOCK) WHERE {2} ORDER BY {3}", 
+                string sql = string.Empty;
+
+                if (withNoLockOption)
+                    sql = string.Format("SELECT TOP {0} * FROM [{1}](NOLOCK) WHERE {2} ORDER BY {3}", 
                                                         maxCount,
                                                         tableName,
                                                         whereSql,
                                                         orderBySql);
+                else
+                    sql = string.Format("SELECT TOP {0} * FROM [{1}] WHERE {2} ORDER BY {3}",
+                                                        maxCount,
+                                                        tableName,
+                                                        whereSql,
+                                                        orderBySql);
+
                 SqlCommand com = new SqlCommand(sql);
 
                 com.Connection = con;
