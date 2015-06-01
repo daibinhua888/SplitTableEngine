@@ -49,21 +49,9 @@ namespace SplitTableEngine
 
         public bool Update(object entity)
         {
-            string pkId = Convert.ToString(entity.ToDictionary()[this.config.PrimaryKeyFieldName]);
+            string mainTableName = this.tableHelper.CalculateTableNameBySplitMethod(entity);//根据算法得到表名
 
-            List<string> mainTableNames = this.tableHelper.GetAllHotTableNames();//拿到所有可能的表名
-
-            foreach (var tableName in mainTableNames)
-            {
-                Dictionary<string, object> results = this.tableHelper.SelectSingleInTable(tableName, pkId);
-                if (results != null && results.Count > 0)
-                {
-                    //更新具体miantable中的记录
-                    return this.tableHelper.UpdateInTable(tableName, entity.ToDictionary());
-                }
-            }
-
-            return false;
+            return this.tableHelper.UpdateInTable(mainTableName, entity.ToDictionary());
         }
 
         public List<Dictionary<string, object>> SelectTopN(int maxCount, string whereSql, string orderBySql, bool withNoLockOption = true)

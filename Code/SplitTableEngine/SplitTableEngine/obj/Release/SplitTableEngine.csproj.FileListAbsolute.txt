@@ -1,0 +1,5 @@
+C:\Users\McKay\Documents\GitHub\SplitTableEngine\Code\SplitTableEngine\SplitTableEngine\bin\Release\SplitTableEngine.dll
+C:\Users\McKay\Documents\GitHub\SplitTableEngine\Code\SplitTableEngine\SplitTableEngine\bin\Release\SplitTableEngine.pdb
+C:\Users\McKay\Documents\GitHub\SplitTableEngine\Code\SplitTableEngine\SplitTableEngine\obj\Release\SplitTableEngine.csprojResolveAssemblyReference.cache
+C:\Users\McKay\Documents\GitHub\SplitTableEngine\Code\SplitTableEngine\SplitTableEngine\obj\Release\SplitTableEngine.dll
+C:\Users\McKay\Documents\GitHub\SplitTableEngine\Code\SplitTableEngine\SplitTableEngine\obj\Release\SplitTableEngine.pdb

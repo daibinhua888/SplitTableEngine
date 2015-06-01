@@ -43,7 +43,6 @@
     <Compile Include="Extentions.cs" />
     <Compile Include="Jobs\ArchiveTableJob.cs" />
     <Compile Include="Jobs\IJob.cs" />
-    <Compile Include="Jobs\MoveRecordsInTablesJob.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SplitMethod.cs" />
     <Compile Include="SplitTableConfigHelper.cs" />

@@ -25,17 +25,17 @@ namespace SplitTableEngine.Jobs
             string createContentArchiveTableSql = @"
                                 IF NOT EXISTS(
 				                                SELECT	1
-				                                FROM	[SplitTableMappings]
+				                                FROM	[SplitTableMappings](NOLOCK)
 				                                WHERE	[PhysicalTableName]='" + contentArchiveTableName + @"'
                                                   AND   [LogicalTableName]='" + tableName + @"'
 			                                )
                                 BEGIN
-                                        "+ createTableScript +@"
+                                        "+ createTableScript + @"
                                 END
 
                                 IF NOT EXISTS(
 				                                SELECT	1
-				                                FROM	[SplitTableMappings]
+				                                FROM	[SplitTableMappings](NOLOCK)
 				                                WHERE	[PhysicalTableName]='" + contentArchiveTableName + @"'
                                                   AND   [LogicalTableName]='" + tableName + @"'
 			                                )
@@ -46,7 +46,7 @@ namespace SplitTableEngine.Jobs
 
             SqlUtil.ExecuteNonQuery(connectionString, createContentArchiveTableSql);
 
-            string selectHotTableNamesSql = "SELECT [PhysicalTableName] FROM [SplitTableMappings] WHERE HotTable=1 AND LogicalTableName='"+tableName+"'";
+            string selectHotTableNamesSql = "SELECT [PhysicalTableName] FROM [SplitTableMappings](NOLOCK) WHERE HotTable=1 AND LogicalTableName='" + tableName + "'";
 
             List<string> hotTables = SqlUtil.GetStringList(connectionString, selectHotTableNamesSql);
 
