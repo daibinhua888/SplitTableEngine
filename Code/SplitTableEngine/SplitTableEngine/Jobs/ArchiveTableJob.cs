@@ -55,20 +55,26 @@ namespace SplitTableEngine.Jobs
                 if (hotTable == contentArchiveTableName)
                     continue;
 
-                string sql=@"
+                string sql = @"
                                     BEGIN TRANSACTION
+
+                                    BEGIN TRY
+                                        DROP TABLE ##MoveRecords
+                                    END TRY
+                                    BEGIN CATCH
+                                    END CATCH
 
                                     SELECT * INTO ##MoveRecords
                                     FROM
                                     (
                                         SELECT * 
-                                        FROM [" + hotTable+@"] 
+                                        FROM [" + hotTable + @"] 
                                         WHERE   " + archiveWhereSql + @"
                                     ) TBL
 
-                                    DELETE FROM [" + hotTable + @"] WHERE [" + primaryKeyFieldName + @"] IN (SELECT [" + primaryKeyFieldName + @"] FROM ##MoveRecords)
+                                    DELETE FROM [" + hotTable + @"] WHERE [" + primaryKeyFieldName + @"] IN (SELECT [" + primaryKeyFieldName + @"] FROM ##MoveRecords(NOLOCK))
                                     
-                                    INSERT INTO [" + contentArchiveTableName + @"] SELECT * FROM ##MoveRecords
+                                    INSERT INTO [" + contentArchiveTableName + @"] SELECT * FROM ##MoveRecords(NOLOCK)
 
                                     DROP TABLE ##MoveRecords
 
