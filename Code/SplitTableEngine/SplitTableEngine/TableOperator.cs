@@ -41,7 +41,7 @@ namespace SplitTableEngine
             return null;
         }
 
-        public List<Dictionary<string, object>> SelectTopNInTable(string tableName, int maxCount, string whereSql, string orderBySql, bool withNoLockOption=true)
+        public List<Dictionary<string, object>> SelectTopNInTable(string tableName, int maxCount, string whereSql, string orderBySql, SelectOption option)
         {
             List<Dictionary<string, object>> result = new List<Dictionary<string, object>>();
 
@@ -49,14 +49,20 @@ namespace SplitTableEngine
             {
                 string sql = string.Empty;
 
-                if (withNoLockOption)
-                    sql = string.Format("SELECT TOP {0} * FROM [{1}](NOLOCK) WHERE {2} ORDER BY {3}", 
+                if (option== SelectOption.None)
+                    sql = string.Format("SELECT TOP {0} * FROM [{1}] WHERE {2} ORDER BY {3}", 
                                                         maxCount,
                                                         tableName,
                                                         whereSql,
                                                         orderBySql);
-                else
-                    sql = string.Format("SELECT TOP {0} * FROM [{1}] WHERE {2} ORDER BY {3}",
+                else if (option == SelectOption.NOLOCK)
+                    sql = string.Format("SELECT TOP {0} * FROM [{1}](NOLOCK) WHERE {2} ORDER BY {3}",
+                                                        maxCount,
+                                                        tableName,
+                                                        whereSql,
+                                                        orderBySql);
+                else if (option == SelectOption.READPAST)
+                    sql = string.Format("SELECT TOP {0} * FROM [{1}](READPAST) WHERE {2} ORDER BY {3}",
                                                         maxCount,
                                                         tableName,
                                                         whereSql,
