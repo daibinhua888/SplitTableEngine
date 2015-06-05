@@ -17,9 +17,9 @@ namespace SplitTableEngine.Jobs
 
             //把上个月、已完成的转入Archive表
             //把上个月、IsDeleted=1的转入Archive表
-            DateTime previousMonth=DateTime.Now.AddMonths(-1);
+            DateTime yesterday=DateTime.Now.AddDays(-1);
 
-            string contentArchiveTableName = string.Format("{0}.Archived.{1}", tableName, previousMonth.ToString("yyyyMM"));
+            string contentArchiveTableName = string.Format("{0}.Archived.{1}", tableName, yesterday.ToString("yyyyMMdd"));
             createTableScript = string.Format(createTableScript, contentArchiveTableName);
 
             string createContentArchiveTableSql = @"
@@ -67,8 +67,8 @@ namespace SplitTableEngine.Jobs
                                     SELECT * INTO ##MoveRecords
                                     FROM
                                     (
-                                        SELECT * 
-                                        FROM [" + hotTable + @"] 
+                                        SELECT TOP 1000 * 
+                                        FROM [" + hotTable + @"](READPAST)
                                         WHERE   " + archiveWhereSql + @"
                                     ) TBL
 
