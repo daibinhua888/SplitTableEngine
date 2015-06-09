@@ -56,7 +56,12 @@ namespace SplitTableEngine.Jobs
                     continue;
 
                 string sql = @"
-                                    BEGIN TRANSACTION
+
+                                    BEGIN TRY
+                                        TRUNCATE TABLE ##MoveRecords
+                                    END TRY
+                                    BEGIN CATCH
+                                    END CATCH
 
                                     BEGIN TRY
                                         DROP TABLE ##MoveRecords
@@ -72,13 +77,15 @@ namespace SplitTableEngine.Jobs
                                         WHERE   " + archiveWhereSql + @"
                                     ) TBL
 
+                                    BEGIN TRANSACTION
+
                                     DELETE FROM [" + hotTable + @"] WHERE [" + primaryKeyFieldName + @"] IN (SELECT [" + primaryKeyFieldName + @"] FROM ##MoveRecords(NOLOCK))
                                     
                                     INSERT INTO [" + contentArchiveTableName + @"] SELECT * FROM ##MoveRecords(NOLOCK)
 
-                                    DROP TABLE ##MoveRecords
-
                                     COMMIT TRANSACTION
+
+                                    DROP TABLE ##MoveRecords
 ";
                 SqlUtil.ExecuteNonQuery(connectionString, sql);
             }

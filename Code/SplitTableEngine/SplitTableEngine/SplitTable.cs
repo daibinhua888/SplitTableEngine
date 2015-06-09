@@ -47,7 +47,7 @@ namespace SplitTableEngine
             this.tableHelper.Insert(mainTableName, entity.ToDictionary());
         }
 
-        public bool Update(object entity)
+        public int Update(object entity)
         {
             string mainTableName = this.tableHelper.CalculateTableNameBySplitMethod(entity);//根据算法得到表名
 

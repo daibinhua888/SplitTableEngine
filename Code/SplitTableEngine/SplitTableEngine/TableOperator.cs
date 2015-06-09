@@ -111,7 +111,7 @@ namespace SplitTableEngine
             return count;
         }
 
-        public bool UpdateInTable(string tableName, Dictionary<string, object> dictionary)
+        public int UpdateInTable(string tableName, Dictionary<string, object> dictionary)
         {
             int rows = 0;
 
@@ -152,7 +152,7 @@ namespace SplitTableEngine
                 con.Close();
             }
 
-            return rows>0;
+            return rows;
         }
 
         public void Insert(string mainTableName, Dictionary<string, object> dictionary)
