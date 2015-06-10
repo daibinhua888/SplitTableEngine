@@ -15,11 +15,16 @@ namespace SplitTableEngine
             this.config = config;
         }
 
-        public Dictionary<string, object> SelectSingleInTable(string tableName, string pkId)
+        public Dictionary<string, object> SelectSingleInTable(string tableName, string pkId, SelectOption option)
         {
             using (SqlConnection con = new SqlConnection(this.config.ConnectionString))
             {
-                string sql = string.Format("SELECT TOP 1 * FROM [{0}](NOLOCK) WHERE {1}=@{1}", tableName, this.config.PrimaryKeyFieldName);
+                string sql = "";
+                if (option == SelectOption.None || option == SelectOption.NOLOCK)
+                    sql = string.Format("SELECT TOP 1 * FROM [{0}](NOLOCK) WHERE {1}=@{1}", tableName, this.config.PrimaryKeyFieldName);
+                else if (option == SelectOption.READPAST)
+                    sql = string.Format("SELECT TOP 1 * FROM [{0}](READPAST) WHERE {1}=@{1}", tableName, this.config.PrimaryKeyFieldName);
+
                 SqlCommand com = new SqlCommand(sql);
 
                 SqlParameter p = new SqlParameter(this.config.PrimaryKeyFieldName, pkId);

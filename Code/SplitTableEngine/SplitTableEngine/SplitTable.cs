@@ -17,23 +17,26 @@ namespace SplitTableEngine
             this.tableHelper = new TableOperator(this.config);
         }
 
-        public Dictionary<string, object> FindByID(string pkId)
+        public Dictionary<string, object> FindByID(string pkId, SelectOption option = SelectOption.NOLOCK, bool includeArchiveTable=true)
         {
             List<string> mainTableNames = this.tableHelper.GetAllHotTableNames();//拿到所有可能的表名
 
             foreach (var tableName in mainTableNames)
             {
-                Dictionary<string, object> results = this.tableHelper.SelectSingleInTable(tableName, pkId);
+                Dictionary<string, object> results = this.tableHelper.SelectSingleInTable(tableName, pkId, option);
                 if (results != null && results.Count > 0)
                     return results;
             }
 
-            List<string> archiveTableNames = this.tableHelper.GetAllArchiveTableNames();
-            foreach (var tableName in archiveTableNames)
+            if (includeArchiveTable)
             {
-                Dictionary<string, object> results = this.tableHelper.SelectSingleInTable(tableName, pkId);
-                if (results != null && results.Count > 0)
-                    return results;
+                List<string> archiveTableNames = this.tableHelper.GetAllArchiveTableNames();
+                foreach (var tableName in archiveTableNames)
+                {
+                    Dictionary<string, object> results = this.tableHelper.SelectSingleInTable(tableName, pkId, option);
+                    if (results != null && results.Count > 0)
+                        return results;
+                }
             }
 
             return null;
