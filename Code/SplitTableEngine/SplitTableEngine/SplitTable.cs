@@ -57,7 +57,7 @@ namespace SplitTableEngine
             return this.tableHelper.UpdateInTable(mainTableName, entity.ToDictionary());
         }
 
-        public List<Dictionary<string, object>> SelectTopN(int maxCount, string whereSql, string orderBySql, SelectOption option)
+        public List<Dictionary<string, object>> SelectTopN(int maxCount, string whereSql, string orderBySql, SelectOption option, bool includeArchiveTable = false)
         {
             //获取所有的可能表名
             List<string> mainTableNames = this.tableHelper.GetAllHotTableNames();//拿到所有可能的表名（由于需要orderby，以后这里需要优化、拆分）
@@ -74,6 +74,18 @@ namespace SplitTableEngine
                 if(tempResult!=null)
                     lst.AddRange(tempResult);
             });
+
+            if (includeArchiveTable)
+            {
+                List<string> archiveTableNames = this.tableHelper.GetAllArchiveTableNames();
+                foreach (var tableName in archiveTableNames)
+                {
+                    List<Dictionary<string, object>> tempResult = this.tableHelper.SelectTopNInTable(tableName, maxCount, whereSql, orderBySql, option);
+
+                    if (tempResult != null)
+                        lst.AddRange(tempResult);
+                }
+            }
 
             //排序
             if (string.IsNullOrEmpty(orderBySql) || orderBySql.IndexOf("asc", StringComparison.OrdinalIgnoreCase) >= 0)
