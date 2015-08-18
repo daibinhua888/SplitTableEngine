@@ -30,6 +30,7 @@ namespace SplitTableEngine
                 SqlParameter p = new SqlParameter(this.config.PrimaryKeyFieldName, pkId);
                 com.Parameters.Add(p);
 
+                com.CommandTimeout = SplitTableConfig.SqlTimeout;
                 com.Connection = con;
 
                 con.Open();
@@ -75,6 +76,7 @@ namespace SplitTableEngine
 
                 SqlCommand com = new SqlCommand(sql);
 
+                com.CommandTimeout = SplitTableConfig.SqlTimeout;
                 com.Connection = con;
 
                 con.Open();
@@ -104,6 +106,7 @@ namespace SplitTableEngine
                                                         whereSql);
                 SqlCommand com = new SqlCommand(sql);
 
+                com.CommandTimeout = SplitTableConfig.SqlTimeout;
                 com.Connection = con;
 
                 con.Open();
@@ -116,8 +119,57 @@ namespace SplitTableEngine
             return count;
         }
 
-        public int UpdateInTable(string tableName, Dictionary<string, object> dictionary)
+        public object ExecuteScalar(string sql)
         {
+            object result = null;
+
+            using (SqlConnection con = new SqlConnection(this.config.ConnectionString))
+            {
+                SqlCommand com = new SqlCommand(sql, con);
+
+                com.CommandTimeout = SplitTableConfig.SqlTimeout;
+
+                con.Open();
+
+                result=com.ExecuteScalar();
+
+                con.Close();
+            }
+
+            return result;
+        }
+
+        public List<Dictionary<string, object>> ExecuteReader(string sql)
+        {
+            var result = new List<Dictionary<string, object>>();
+
+            using (SqlConnection con = new SqlConnection(this.config.ConnectionString))
+            {
+                SqlCommand com = new SqlCommand(sql, con);
+
+                com.CommandTimeout = SplitTableConfig.SqlTimeout;
+
+                con.Open();
+
+                using (var reader = com.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        result.Add(reader.ConvertSqlReaderToDictionary());
+                    }
+                }
+
+                con.Close();
+            }
+
+            return result;
+        }
+
+        public int UpdateInTable(string tableName, Dictionary<string, object> dictionary, string extraWhereCondition)
+        {
+            if (!string.IsNullOrEmpty(extraWhereCondition))
+                extraWhereCondition = string.Format("AND {0}", extraWhereCondition);
+
             int rows = 0;
 
             string pkId = Convert.ToString(dictionary[this.config.PrimaryKeyFieldName]);
@@ -145,9 +197,11 @@ namespace SplitTableEngine
                 p = new SqlParameter(this.config.PrimaryKeyFieldName, pkId);
                 parameters.Add(p);
 
-                string sql = string.Format("UPDATE [{0}] SET {1} WHERE {2}=@{2}", tableName, setSql.ToString().TrimEnd(",".ToCharArray()), this.config.PrimaryKeyFieldName);
+                string sql = string.Format("UPDATE [{0}] SET {1} WHERE {2}=@{2} {3}", tableName, setSql.ToString().TrimEnd(",".ToCharArray()), this.config.PrimaryKeyFieldName, extraWhereCondition);
                 SqlCommand com = new SqlCommand(sql);
                 com.Parameters.AddRange(parameters.ToArray());
+
+                com.CommandTimeout = SplitTableConfig.SqlTimeout;
                 com.Connection = con;
 
                 con.Open();
@@ -184,6 +238,8 @@ namespace SplitTableEngine
                 string sql = string.Format("INSERT INTO [{0}]({1}) VALUES({2})", mainTableName, fieldSql.ToString().TrimEnd(",".ToCharArray()), valueSql.ToString().TrimEnd(",".ToCharArray()));
                 SqlCommand com = new SqlCommand(sql);
                 com.Parameters.AddRange(parameters.ToArray());
+
+                com.CommandTimeout = SplitTableConfig.SqlTimeout;
                 com.Connection = con;
 
                 con.Open();
@@ -219,6 +275,7 @@ namespace SplitTableEngine
 
                 SqlCommand com = new SqlCommand(sql);
 
+                com.CommandTimeout = SplitTableConfig.SqlTimeout;
                 com.Connection = con;
 
                 con.Open();
@@ -249,6 +306,7 @@ namespace SplitTableEngine
 
                 SqlCommand com = new SqlCommand(sql);
 
+                com.CommandTimeout = SplitTableConfig.SqlTimeout;
                 com.Connection = con;
 
                 con.Open();

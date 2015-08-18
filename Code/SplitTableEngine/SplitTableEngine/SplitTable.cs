@@ -17,7 +17,22 @@ namespace SplitTableEngine
             this.tableHelper = new TableOperator(this.config);
         }
 
-        public Dictionary<string, object> FindByID(string pkId, SelectOption option = SelectOption.NOLOCK, bool includeArchiveTable=true)
+        public void Insert(object entity)
+        {
+            //定位tablename，从meta table中
+            string mainTableName = this.tableHelper.CalculateTableNameBySplitMethod(entity);//根据算法得到表名
+
+            this.tableHelper.Insert(mainTableName, entity.ToDictionary());
+        }
+
+        public int Update(object entity, string extraWhereCondition="")
+        {
+            string mainTableName = this.tableHelper.CalculateTableNameBySplitMethod(entity);//根据算法得到表名
+
+            return this.tableHelper.UpdateInTable(mainTableName, entity.ToDictionary(), extraWhereCondition);
+        }
+
+        public Dictionary<string, object> FindByID(string pkId, SelectOption option = SelectOption.NOLOCK, bool includeArchiveTable = true)
         {
             List<string> mainTableNames = this.tableHelper.GetAllHotTableNames();//拿到所有可能的表名
 
@@ -40,21 +55,6 @@ namespace SplitTableEngine
             }
 
             return null;
-        }
-
-        public void Insert(object entity)
-        {
-            //定位tablename，从meta table中
-            string mainTableName = this.tableHelper.CalculateTableNameBySplitMethod(entity);//根据算法得到表名
-
-            this.tableHelper.Insert(mainTableName, entity.ToDictionary());
-        }
-
-        public int Update(object entity)
-        {
-            string mainTableName = this.tableHelper.CalculateTableNameBySplitMethod(entity);//根据算法得到表名
-
-            return this.tableHelper.UpdateInTable(mainTableName, entity.ToDictionary());
         }
 
         public List<Dictionary<string, object>> SelectTopN(int maxCount, string whereSql, string orderBySql, SelectOption option, bool includeArchiveTable = false)
@@ -115,5 +115,25 @@ namespace SplitTableEngine
 
             return count;
         }
+
+        //public object ExecuteScalar(string sql, bool includeArchiveTable = true)
+        //{
+        //    /*
+        //    传入sql如下:
+        //                select count(1) from me where xxx=a and yyy=2
+        //                select count(distinct userId) from me where xxx=a
+        //                select max(userId) from me
+        //                select min(userId) from me where xxx=a and yyy='aaa'
+        //                select sum(score) from me
+        //                select count(1) as UserCount from me
+        //                select avg(score) as AvgScore from me
+        //    */
+        //    throw new NotImplementedException();
+        //}
+
+        //public List<Dictionary<string, object>> ExecuteReader(string sql, bool includeArchiveTable = true)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

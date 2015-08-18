@@ -15,6 +15,7 @@ namespace SplitTableEngine
             {
                 SqlCommand com = new SqlCommand(sql);
 
+                com.CommandTimeout = SplitTableConfig.SqlTimeout;
                 com.Connection = con;
 
                 con.Open();
@@ -40,6 +41,7 @@ namespace SplitTableEngine
             {
                 SqlCommand com = new SqlCommand(sql);
 
+                com.CommandTimeout = SplitTableConfig.SqlTimeout;
                 com.Connection = con;
 
                 con.Open();
@@ -67,6 +69,7 @@ namespace SplitTableEngine
             {
                 SqlCommand com = new SqlCommand(sql);
 
+                com.CommandTimeout = SplitTableConfig.SqlTimeout;
                 com.Connection = con;
 
                 con.Open();

@@ -72,7 +72,7 @@ namespace SplitTableEngine.Jobs
                                     SELECT * INTO ##MoveRecords
                                     FROM
                                     (
-                                        SELECT TOP 1000 * 
+                                        SELECT TOP 500 * 
                                         FROM [" + hotTable + @"](READPAST)
                                         WHERE   " + archiveWhereSql + @"
                                     ) TBL
